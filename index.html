@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samdoc Coffee & More — Life Happens, Coffee Helps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ======================================================
+   ROOT TOKENS
+====================================================== */
+:root {
+  --espresso:   #1A0F08;
+  --roast:      #2D1B0E;
+  --roast-mid:  #3D2512;
+  --cream:      #F5ECD7;
+  --cream-dim:  rgba(245,236,215,0.65);
+  --cream-faint:rgba(245,236,215,0.35);
+  --gold:       #C9A84C;
+  --gold-light: #E3C46A;
+  --gold-dim:   rgba(201,168,76,0.25);
+  --gold-glow:  rgba(201,168,76,0.18);
+  --overlay:    rgba(26,15,8,0.86);
+  --overlay-hvy:rgba(26,15,8,0.92);
+  --font-d: 'Playfair Display', Georgia, serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  --ease-smooth: cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ======================================================
+   RESET & BASE
+====================================================== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:var(--font-b);background:var(--espresso);color:var(--cream);overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:var(--font-b);}
+img{display:block;max-width:100%;}
+ul{list-style:none;}
+
+/* ======================================================
+   LOADING SCREEN
+====================================================== */
+#loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--espresso);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:opacity .7s var(--ease-smooth), visibility .7s;
+}
+#loader.out{opacity:0;visibility:hidden;pointer-events:none;}
+.loader-icon{font-size:2.8rem;animation:loaderSpin 2s ease-in-out infinite;}
+.loader-brand{
+  font-family:var(--font-d);font-size:2.8rem;font-weight:900;
+  letter-spacing:.45em;color:var(--gold);
+  animation:loaderPulse 1.6s ease-in-out infinite;
+}
+.loader-sub{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--cream-dim);}
+.loader-bar{width:180px;height:2px;background:rgba(201,168,76,.15);border-radius:2px;overflow:hidden;margin-top:4px;}
+.loader-fill{height:100%;width:0;background:var(--gold);border-radius:2px;animation:loaderBar 2s ease forwards;}
+@keyframes loaderPulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+@keyframes loaderSpin{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+@keyframes loaderBar{to{width:100%;}}
+
+/* ======================================================
+   NAVBAR
+====================================================== */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;
+}
+#navbar::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(26,15,8,.93);
+  border-bottom:1px solid rgba(201,168,76,.18);
+}
+.nav-inner{
+  position:relative;z-index:1;
+  max-width:1200px;margin:0 auto;padding:0 28px;
+  height:72px;display:flex;align-items:center;justify-content:space-between;
+}
+.nav-brand{cursor:pointer;line-height:1.1;}
+.nav-brand-main{
+  font-family:var(--font-d);font-size:1.35rem;font-weight:900;
+  letter-spacing:.18em;color:var(--cream);display:block;
+}
+.nav-brand-sub{
+  font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;
+  color:var(--gold);display:block;
+}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nav-links a{
+  font-size:.68rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cream-dim);cursor:pointer;padding-bottom:3px;
+  border-bottom:1px solid transparent;transition:color .25s,border-color .25s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-right{display:flex;align-items:center;gap:14px;}
+/* Cart button */
+#cart-btn{
+  position:relative;background:transparent;
+  border:1px solid rgba(201,168,76,.35);color:var(--gold);
+  padding:7px 13px;border-radius:5px;font-size:1.05rem;
+  transition:background .25s,border-color .25s;
+}
+#cart-btn:hover{background:var(--gold-dim);border-color:var(--gold);}
+#cart-badge{
+  position:absolute;top:-7px;right:-7px;
+  background:var(--gold);color:var(--espresso);
+  font-size:.6rem;font-weight:700;
+  width:17px;height:17px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+}
+/* Hamburger */
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:5px;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--gold);border-radius:2px;transition:all .3s;}
+/* Mobile Nav */
+.mobile-nav{
+  display:none;position:absolute;top:100%;left:0;right:0;
+  background:rgba(22,12,5,.98);border-top:1px solid rgba(201,168,76,.15);
+}
+.mobile-nav.open{display:block;}
+.mobile-nav a{
+  display:block;padding:15px 28px;
+  font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--cream-dim);border-bottom:1px solid rgba(201,168,76,.08);
+  cursor:pointer;transition:color .2s,background .2s;
+}
+.mobile-nav a:hover{color:var(--gold);background:rgba(201,168,76,.04);}
+
+/* ======================================================
+   VIEWS SYSTEM
+====================================================== */
+.view{display:none;min-height:100vh;padding-top:72px;}
+.view.active{display:block;animation:vFadeIn .55s var(--ease-smooth);}
+@keyframes vFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ======================================================
+   SHARED SECTION COMPONENTS
+====================================================== */
+/* Photo-backed section base — apply bg-image inline */
+.photo-sec{position:relative;background-size:cover;background-position:center;}
+.photo-sec::before{content:'';position:absolute;inset:0;background:var(--overlay);}
+.sec-z{position:relative;z-index:1;}
+
+/* Eyebrow + divider + title block */
+.eyebrow{
+  display:block;font-size:.62rem;font-weight:700;letter-spacing:.38em;text-transform:uppercase;
+  color:var(--gold);text-align:center;margin-bottom:18px;
+}
+.g-divider{
+  display:flex;align-items:center;gap:14px;max-width:160px;margin:0 auto 36px;
+}
+.g-divider::before,.g-divider::after{content:'';flex:1;height:1px;background:var(--gold);opacity:.45;}
+.g-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;}
+.sec-title{
+  font-family:var(--font-d);font-size:clamp(2rem,5vw,3.6rem);font-weight:900;
+  letter-spacing:.015em;line-height:1.12;color:var(--cream);text-align:center;
+}
+.sec-title em{font-style:italic;color:var(--gold);}
+.sec-sub{
+  font-size:1rem;color:var(--cream-dim);text-align:center;line-height:1.75;
+  max-width:580px;margin:0 auto;
+}
+
+/* Buttons */
+.btn-gold{
+  display:inline-block;background:var(--gold);color:var(--espresso);
+  font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  padding:14px 34px;border-radius:5px;border:none;
+  transition:background .3s,box-shadow .3s,transform .25s;cursor:pointer;
+}
+.btn-gold:hover{background:var(--gold-light);box-shadow:0 8px 28px rgba(201,168,76,.38);transform:translateY(-2px);}
+.btn-outline{
+  display:inline-block;background:transparent;color:var(--cream);
+  font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  padding:13px 34px;border-radius:5px;border:1px solid rgba(245,236,215,.38);
+  transition:border-color .3s,background .3s,transform .25s;cursor:pointer;
+}
+.btn-outline:hover{border-color:var(--cream);background:rgba(245,236,215,.08);transform:translateY(-2px);}
+
+/* Scroll fade-in */
+.fi{opacity:0;transform:translateY(28px);transition:opacity .75s var(--ease-smooth),transform .75s var(--ease-smooth);}
+.fi.vis{opacity:1;transform:translateY(0);}
+.fi.delay-1{transition-delay:.12s;}
+.fi.delay-2{transition-delay:.24s;}
+.fi.delay-3{transition-delay:.36s;}
+
+/* ======================================================
+   MENU / PRODUCT CARDS
+====================================================== */
+.cards-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:22px;
+}
+.m-card{
+  border:1px solid rgba(201,168,76,.18);border-radius:8px;overflow:hidden;
+  background:rgba(26,15,8,.65);backdrop-filter:blur(6px);
+  transition:border-color .4s,box-shadow .4s,transform .4s;
+}
+.m-card:hover{
+  border-color:var(--gold);
+  box-shadow:0 14px 44px rgba(201,168,76,.2);
+  transform:translateY(-5px);
+}
+.m-photo{
+  height:176px;background:var(--roast);
+  border-bottom:1px solid rgba(201,168,76,.12);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  position:relative;overflow:hidden;
+}
+.m-photo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(45,27,14,.6) 0%,transparent 100%);
+}
+.m-photo-emoji{font-size:2.2rem;position:relative;z-index:1;opacity:.85;}
+.m-photo-name{
+  font-family:var(--font-d);font-size:1rem;font-weight:700;
+  color:var(--gold);text-align:center;padding:0 16px;
+  position:relative;z-index:1;opacity:.8;line-height:1.2;
+}
+.m-body{padding:20px;}
+.m-name{font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--cream);margin-bottom:8px;}
+.m-desc{font-size:.8rem;color:var(--cream-dim);line-height:1.6;margin-bottom:16px;}
+.m-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.m-price{font-family:var(--font-d);font-size:1.15rem;font-weight:700;color:var(--gold);}
+.btn-want{
+  background:transparent;border:1px solid var(--gold);color:var(--gold);
+  font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:8px 15px;border-radius:4px;
+  transition:background .3s,color .3s,box-shadow .3s;
+}
+.btn-want:hover{background:var(--gold);color:var(--espresso);box-shadow:0 4px 14px rgba(201,168,76,.3);}
+
+/* ======================================================
+   EXPERIENCE / VALUE CARDS
+====================================================== */
+.exp-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:22px;margin-top:52px;
+}
+.exp-card{
+  border:1px solid rgba(201,168,76,.18);border-radius:8px;
+  padding:40px 28px;text-align:center;
+  background:rgba(26,15,8,.55);backdrop-filter:blur(6px);
+  transition:border-color .4s,box-shadow .4s;
+}
+.exp-card:hover{border-color:var(--gold);box-shadow:0 10px 34px rgba(201,168,76,.16);}
+.exp-emoji{font-size:2.4rem;display:block;margin-bottom:20px;}
+.exp-title{font-family:var(--font-d);font-size:1.25rem;font-weight:700;color:var(--cream);margin-bottom:12px;}
+.exp-desc{font-size:.85rem;color:var(--cream-dim);line-height:1.75;}
+
+/* Review cards */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px;margin-top:52px;}
+.rev-card{
+  border:1px solid rgba(201,168,76,.18);border-radius:8px;padding:32px;
+  background:rgba(26,15,8,.55);backdrop-filter:blur(6px);
+  transition:border-color .4s,box-shadow .4s;
+}
+.rev-card:hover{border-color:var(--gold);box-shadow:0 10px 34px rgba(201,168,76,.14);}
+.rev-stars{color:var(--gold);font-size:1rem;letter-spacing:3px;margin-bottom:16px;}
+.rev-text{
+  font-family:var(--font-d);font-style:italic;font-size:1rem;
+  color:var(--cream);line-height:1.78;margin-bottom:20px;
+}
+.rev-author{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+
+/* ======================================================
+   HOME — HERO
+====================================================== */
+#hero{
+  position:relative;min-height:calc(100vh - 72px);
+  background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+#hero::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.76);}
+
+/* steam particles */
+.particle{
+  position:absolute;border-radius:50%;
+  background:rgba(201,168,76,.07);pointer-events:none;
+  animation:steamUp linear infinite;
+}
+@keyframes steamUp{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:0;}
+  12%{opacity:.9;}
+  85%{opacity:.2;}
+  100%{transform:translateY(-130vh) translateX(30px) scale(2.8);opacity:0;}
+}
+
+.hero-content{
+  position:relative;z-index:2;
+  max-width:920px;margin:0 auto;padding:80px 24px;text-align:center;
+}
+.hero-est{
+  display:inline-block;border:1px solid var(--gold);color:var(--gold);
+  font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;
+  padding:7px 22px;border-radius:100px;margin-bottom:34px;
+}
+.hero-title{
+  font-family:var(--font-d);font-size:clamp(3rem,9vw,7rem);font-weight:900;
+  line-height:1.04;color:var(--cream);letter-spacing:-.01em;margin-bottom:26px;
+}
+.hero-title em{font-style:italic;color:var(--gold);}
+.hero-sub{
+  font-size:clamp(.95rem,2vw,1.12rem);color:var(--cream-dim);
+  max-width:480px;margin:0 auto 44px;line-height:1.78;
+}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+/* ======================================================
+   HOME — STATS BAR
+====================================================== */
+#stats-bar{
+  background-image:url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#stats-bar::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.89);}
+.stats-wrap{
+  position:relative;z-index:1;max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(201,168,76,.14);
+}
+.stat{padding:34px 20px;text-align:center;background:rgba(26,15,8,.55);}
+.stat-val{
+  font-family:var(--font-d);font-size:1.7rem;font-weight:800;
+  color:var(--gold);display:block;margin-bottom:7px;
+}
+.stat-lbl{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);}
+
+/* ======================================================
+   HOME — ABOUT SNIPPET
+====================================================== */
+#home-about{
+  background-image:url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#home-about::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.85);}
+.about-wrap{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:100px 24px;text-align:center;}
+
+/* ======================================================
+   HOME — FEATURED
+====================================================== */
+#featured{
+  background-image:url('https://images.unsplash.com/photo-1504630083234-14187a9df0f5?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#featured::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.87);}
+.feat-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:100px 24px;}
+.feat-head{text-align:center;margin-bottom:54px;}
+
+/* ======================================================
+   HOME — EXPERIENCE
+====================================================== */
+#experience{
+  background-image:url('https://images.unsplash.com/photo-1521302200778-33500795e128?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#experience::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.87);}
+.exp-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:100px 24px;}
+
+/* ======================================================
+   HOME — REVIEWS
+====================================================== */
+#reviews{
+  background-image:url('https://images.unsplash.com/photo-1453614512568-c4024d13c247?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#reviews::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.87);}
+.rev-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:100px 24px;}
+
+/* ======================================================
+   HOME — INSTAGRAM
+====================================================== */
+#instagram{
+  background-image:url('https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#instagram::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.85);}
+.ig-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:100px 24px;text-align:center;}
+.ig-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  max-width:560px;margin:40px auto;
+}
+.ig-box{
+  aspect-ratio:1;background:var(--roast);
+  border:1px solid rgba(201,168,76,.15);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;opacity:.55;cursor:pointer;
+  transition:border-color .3s,opacity .3s,transform .3s;
+}
+.ig-box:hover{border-color:var(--gold);opacity:1;transform:scale(1.03);}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+#site-footer{
+  background-image:url('https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#site-footer::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.94);}
+.footer-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:72px 24px 36px;}
+.footer-top{text-align:center;margin-bottom:48px;}
+.footer-brand{font-family:var(--font-d);font-size:1.85rem;font-weight:900;letter-spacing:.22em;color:var(--cream);margin-bottom:8px;}
+.footer-tag{font-family:var(--font-d);font-style:italic;color:var(--gold);font-size:.95rem;margin-bottom:32px;}
+.footer-nav{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin-bottom:28px;}
+.footer-nav a{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);cursor:pointer;transition:color .2s;}
+.footer-nav a:hover{color:var(--gold);}
+.footer-socials{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.s-pill{
+  border:1px solid rgba(201,168,76,.28);color:var(--cream-dim);
+  font-size:.65rem;letter-spacing:.15em;padding:8px 18px;border-radius:100px;
+  cursor:pointer;transition:border-color .3s,color .3s;
+}
+.s-pill:hover{border-color:var(--gold);color:var(--gold);}
+.footer-hr{height:1px;background:rgba(201,168,76,.14);margin:40px 0 20px;}
+.footer-copy{text-align:center;font-size:.66rem;color:rgba(245,236,215,.35);letter-spacing:.08em;}
+
+/* ======================================================
+   VIEW HERO (shared for Menu, Story, Order, Contact)
+====================================================== */
+.v-hero{
+  position:relative;background-size:cover;background-position:center;
+  padding:88px 24px 72px;text-align:center;
+}
+.v-hero::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.83);}
+.v-hero-inner{position:relative;z-index:1;}
+.v-hero-title{
+  font-family:var(--font-d);font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900;
+  color:var(--cream);letter-spacing:.02em;margin-bottom:16px;
+}
+
+/* ======================================================
+   MENU VIEW
+====================================================== */
+#menu-body{
+  background-image:url('https://images.unsplash.com/photo-1459755486867-b55449bb39ff?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#menu-body::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.88);}
+.menu-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:56px 24px 80px;}
+/* Tabs */
+.m-tabs{
+  display:flex;border:1px solid rgba(201,168,76,.22);
+  border-radius:7px;overflow-x:auto;margin-bottom:44px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.m-tabs::-webkit-scrollbar{display:none;}
+.m-tab{
+  flex:0 0 auto;padding:13px 18px;background:transparent;border:none;
+  color:var(--cream-dim);font-size:.68rem;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;transition:background .25s,color .25s;
+  border-right:1px solid rgba(201,168,76,.22);white-space:nowrap;
+}
+.m-tab:last-child{border-right:none;}
+.m-tab:hover{background:rgba(201,168,76,.07);color:var(--gold);}
+.m-tab.on{background:var(--gold);color:var(--espresso);}
+/* Category grids */
+.m-cat{display:none;}
+.m-cat.on{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;animation:vFadeIn .4s ease;}
+
+/* ======================================================
+   OUR STORY VIEW
+====================================================== */
+#story-body{
+  background-image:url('https://images.unsplash.com/photo-1504630083234-14187a9df0f5?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#story-body::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.87);}
+.story-prose{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:84px 24px;}
+.story-p{
+  font-family:var(--font-d);font-size:1.12rem;font-weight:400;
+  color:var(--cream);line-height:1.95;margin-bottom:28px;
+}
+/* Timeline */
+#timeline{
+  background-image:url('https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#timeline::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.89);}
+.tl-wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:84px 24px;}
+.tl-list{position:relative;margin-top:52px;}
+.tl-list::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(201,168,76,.22);}
+.tl-item{padding:0 0 44px 36px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:-4.5px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--gold);}
+.tl-year{font-size:.62rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.tl-event{font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--cream);margin-bottom:8px;}
+.tl-detail{font-size:.85rem;color:var(--cream-dim);line-height:1.65;}
+.tl-placeholder{border:1px dashed rgba(201,168,76,.22);border-radius:5px;padding:14px 18px;font-size:.8rem;color:rgba(245,236,215,.28);font-style:italic;}
+/* Values */
+#values{
+  background-image:url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#values::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.87);}
+.val-wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:84px 24px;}
+/* Team */
+#team-sec{
+  background-image:url('https://images.unsplash.com/photo-1545665277-5937489579f2?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#team-sec::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.88);}
+.team-wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:84px 24px;}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:24px;margin-top:52px;}
+.team-card{text-align:center;}
+.team-photo{
+  width:100%;aspect-ratio:1;background:var(--roast);
+  border:1px solid rgba(201,168,76,.2);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin-bottom:16px;color:rgba(201,168,76,.25);
+  transition:border-color .3s;
+}
+.team-card:hover .team-photo{border-color:var(--gold);}
+.team-name{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--cream);margin-bottom:5px;}
+.team-role{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+/* Story CTA */
+#story-cta{
+  background-image:url('https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#story-cta::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.87);}
+.scta-wrap{position:relative;z-index:1;text-align:center;padding:84px 24px;}
+
+/* ======================================================
+   ORDER VIEW
+====================================================== */
+#quick-order{
+  background-image:url('https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#quick-order::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.89);}
+.qo-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:64px 24px 72px;}
+#checkout-sec{
+  background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#checkout-sec::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.91);}
+.co-wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:80px 24px 100px;}
+/* Form */
+.f-group{margin-bottom:20px;}
+.f-label{
+  display:block;font-size:.67rem;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:8px;
+}
+.f-input{
+  width:100%;background:rgba(26,15,8,.65);border:1px solid rgba(201,168,76,.22);
+  color:var(--cream);font-family:var(--font-b);font-size:.9rem;
+  padding:13px 15px;border-radius:5px;outline:none;transition:border-color .3s;
+}
+.f-input:focus{border-color:var(--gold);}
+.f-input::placeholder{color:rgba(245,236,215,.28);}
+textarea.f-input{min-height:100px;resize:vertical;}
+/* Order type toggle */
+.o-toggle{
+  display:flex;border:1px solid rgba(201,168,76,.22);
+  border-radius:5px;overflow:hidden;margin-bottom:28px;
+}
+.o-opt{
+  flex:1;padding:14px;background:transparent;border:none;
+  font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cream-dim);transition:background .25s,color .25s;
+}
+.o-opt.on{background:var(--gold);color:var(--espresso);}
+/* Payment */
+.pay-opts{display:flex;flex-direction:column;gap:11px;}
+.pay-opt{
+  display:flex;align-items:center;gap:13px;padding:15px;
+  border:1px solid rgba(201,168,76,.18);border-radius:5px;cursor:pointer;
+  transition:border-color .3s,background .3s;
+}
+.pay-opt:hover,.pay-opt.sel{border-color:var(--gold);background:rgba(201,168,76,.05);}
+.pay-opt input[type="radio"]{accent-color:var(--gold);width:16px;height:16px;}
+.pay-lbl{font-size:.88rem;color:var(--cream);}
+.bank-box{
+  display:none;margin-top:14px;border:1px dashed rgba(201,168,76,.28);
+  border-radius:5px;padding:16px;
+}
+.bank-box p{font-size:.82rem;color:var(--cream-dim);line-height:1.6;}
+.bank-box strong{color:var(--gold);}
+/* Summary box */
+.co-summary{
+  border:1px solid rgba(201,168,76,.18);border-radius:8px;
+  padding:24px;background:rgba(26,15,8,.5);margin-bottom:28px;
+}
+.co-summary h3{
+  font-family:var(--font-d);color:var(--gold);
+  font-size:1rem;margin-bottom:16px;
+}
+.co-empty{font-size:.85rem;color:var(--cream-dim);text-align:center;padding:16px;}
+.co-row{
+  display:flex;justify-content:space-between;padding:8px 0;
+  border-bottom:1px solid rgba(201,168,76,.07);font-size:.85rem;
+}
+.co-row:last-child{border-bottom:none;}
+.co-total-row{
+  display:flex;justify-content:space-between;padding-top:14px;
+  border-top:1px solid rgba(201,168,76,.15);margin-top:8px;
+}
+.co-total-lbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cream-dim);}
+.co-total-amt{font-family:var(--font-d);font-size:1.25rem;font-weight:700;color:var(--gold);}
+
+/* ======================================================
+   CONTACT VIEW
+====================================================== */
+#contact-body{
+  background-image:url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#contact-body::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.88);}
+.cb-wrap{
+  position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:80px 24px;
+  display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start;
+}
+.ci-title{font-family:var(--font-d);font-size:1.8rem;color:var(--cream);margin-bottom:30px;}
+.ci-item{display:flex;gap:16px;margin-bottom:26px;align-items:flex-start;}
+.ci-icon{font-size:1.2rem;margin-top:2px;flex-shrink:0;}
+.ci-lbl{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.ci-val{font-size:.9rem;color:var(--cream);line-height:1.5;}
+.ci-val a{color:inherit;transition:color .2s;}
+.ci-val a:hover{color:var(--gold);}
+/* Map */
+#map-sec{
+  background-image:url('https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=1920&q=80');
+  background-size:cover;background-position:center;position:relative;
+}
+#map-sec::before{content:'';position:absolute;inset:0;background:rgba(26,15,8,.88);}
+.map-wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:80px 24px;}
+.map-ph{
+  height:340px;background:var(--roast);border:1px dashed rgba(201,168,76,.28);
+  border-radius:8px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;margin-top:40px;
+}
+.map-ph-icon{font-size:3rem;opacity:.4;}
+.map-ph-txt{font-family:var(--font-d);font-size:1.1rem;color:var(--cream-dim);}
+.map-ph-addr{font-size:.78rem;letter-spacing:.1em;color:var(--gold);}
+
+/* ======================================================
+   CART OVERLAY + PANEL
+====================================================== */
+#cart-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.52);
+  z-index:1500;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
+}
+#cart-overlay.open{opacity:1;visibility:visible;}
+#cart-panel{
+  position:fixed;top:0;right:-430px;width:100%;max-width:430px;height:100vh;
+  background:var(--espresso);border-left:1px solid rgba(201,168,76,.2);
+  z-index:1600;display:flex;flex-direction:column;
+  transition:right .4s var(--ease-smooth);
+}
+#cart-panel.open{right:0;}
+.cp-head{
+  padding:22px 24px;border-bottom:1px solid rgba(201,168,76,.15);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cp-title{font-family:var(--font-d);font-size:1.25rem;color:var(--cream);}
+.cp-close{background:none;border:none;color:var(--cream-dim);font-size:1.1rem;padding:4px 8px;transition:color .2s;}
+.cp-close:hover{color:var(--gold);}
+.cp-items{flex:1;overflow-y:auto;padding:14px 16px;}
+/* scrollbar */
+.cp-items::-webkit-scrollbar{width:4px;}
+.cp-items::-webkit-scrollbar-track{background:transparent;}
+.cp-items::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3);border-radius:2px;}
+.cp-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid rgba(201,168,76,.08);
+}
+.cp-iname{flex:1;font-size:.84rem;color:var(--cream);line-height:1.3;}
+.qty-ctrl{display:flex;align-items:center;gap:7px;}
+.qty-b{
+  background:rgba(201,168,76,.14);border:none;color:var(--gold);
+  width:24px;height:24px;border-radius:4px;font-size:.95rem;
+  transition:background .2s,color .2s;
+}
+.qty-b:hover{background:var(--gold);color:var(--espresso);}
+.qty-n{font-size:.82rem;color:var(--cream);min-width:16px;text-align:center;}
+.cp-iprice{font-size:.8rem;color:var(--gold);font-weight:600;white-space:nowrap;}
+.cp-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:200px;gap:12px;
+}
+.cp-empty-icon{font-size:2.4rem;opacity:.3;}
+.cp-empty-txt{font-size:.85rem;color:var(--cream-dim);}
+.cp-foot{padding:18px 24px;border-top:1px solid rgba(201,168,76,.15);}
+.cp-subtotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.cp-sub-lbl{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cream-dim);}
+.cp-sub-amt{font-family:var(--font-d);font-size:1.2rem;color:var(--gold);font-weight:700;}
+
+/* ======================================================
+   FLOATING BUTTONS
+====================================================== */
+#wa-float{
+  position:fixed;bottom:26px;right:26px;
+  width:56px;height:56px;background:#25D366;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  z-index:900;box-shadow:0 6px 24px rgba(37,211,102,.42);
+  font-size:1.5rem;transition:transform .3s,box-shadow .3s;
+}
+#wa-float:hover{transform:scale(1.1);box-shadow:0 10px 32px rgba(37,211,102,.55);}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+@media(max-width:900px){
+  .cb-wrap{grid-template-columns:1fr;gap:44px;}
+  .stats-wrap{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .m-tab{font-size:.6rem;padding:11px 6px;}
+  #hero{background-attachment:scroll;}
+}
+@media(max-width:500px){
+  .hero-title{font-size:2.6rem;}
+  .hero-btns{flex-direction:column;align-items:center;}
+  .stats-wrap{grid-template-columns:1fr 1fr;}
+  #cart-panel{max-width:100%;}
+  .ig-grid{max-width:100%;}
+}
+
+/* ======================================================
+   MISC
+====================================================== */
+.mt-8{margin-top:8px;}
+.mt-16{margin-top:16px;}
+.mt-24{margin-top:24px;}
+.mt-40{margin-top:40px;}
+.mt-52{margin-top:52px;}
+.mb-8{margin-bottom:8px;}
+.mb-16{margin-bottom:16px;}
+.mb-24{margin-bottom:24px;}
+.mb-40{margin-bottom:40px;}
+.center{text-align:center;}
+
+/* ======================================================
+   BACKGROUND FIX — LIGHT OVERLAYS + ANIMATIONS
+   The previous overlays were 0.85–0.94 opacity (near-solid).
+   These overrides bring them down to 0.55–0.65 so the
+   actual coffee photos are visible and dramatic.
+====================================================== */
+
+/* ---- HERO: Ken Burns slow zoom + pan ---- */
+@keyframes kenBurns {
+  0%   { transform: scale(1)    translate(0%,   0%);   }
+  20%  { transform: scale(1.06) translate(-1%,  -0.5%);}
+  50%  { transform: scale(1.10) translate(1%,   -1%);  }
+  80%  { transform: scale(1.06) translate(-0.5%, 0.5%);}
+  100% { transform: scale(1)    translate(0%,   0%);   }
+}
+
+/* ---- Sections: gentle slow float ---- */
+@keyframes bgFloat {
+  0%,100% { background-position: 50% 50%; }
+  33%     { background-position: 52% 47%; }
+  66%     { background-position: 48% 53%; }
+}
+
+/* ---- Gold dot-grid tech texture on every photo section ---- */
+@keyframes gridShimmer {
+  0%,100% { opacity: .28; }
+  50%     { opacity: .14; }
+}
+
+/* Hero — separate animated bg layer so Ken Burns works */
+#hero {
+  background-image: none !important;
+}
+.hero-bg {
+  position: absolute;
+  inset: -8%;
+  background-image: url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  animation: kenBurns 22s ease-in-out infinite;
+  z-index: 0;
+}
+#hero::before {
+  background: linear-gradient(
+    160deg,
+    rgba(26,15,8,0.70) 0%,
+    rgba(26,15,8,0.42) 45%,
+    rgba(26,15,8,0.65) 100%
+  ) !important;
+  z-index: 1;
+}
+/* Tech dot-grid shimmer on hero */
+#hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 36px 36px;
+  z-index: 1;
+  pointer-events: none;
+  animation: gridShimmer 4s ease-in-out infinite;
+}
+.hero-content { z-index: 2 !important; }
+.particle     { z-index: 1 !important; }
+
+/* ---- Navbar — keep dark (legibility) ---- */
+#navbar::before { background: rgba(26,15,8,.92) !important; }
+
+/* ---- Stats bar ---- */
+#stats-bar { animation: bgFloat 20s ease-in-out infinite; }
+#stats-bar::before {
+  background: linear-gradient(rgba(26,15,8,0.62), rgba(26,15,8,0.58)) !important;
+}
+.stat { background: rgba(26,15,8,.40) !important; }
+
+/* ---- About ---- */
+#home-about { animation: bgFloat 24s ease-in-out infinite; }
+#home-about::before {
+  background: linear-gradient(135deg, rgba(26,15,8,0.62) 0%, rgba(26,15,8,0.50) 100%) !important;
+}
+
+/* ---- Featured ---- */
+#featured { animation: bgFloat 22s ease-in-out infinite; }
+#featured::before {
+  background: linear-gradient(rgba(26,15,8,0.60), rgba(26,15,8,0.52)) !important;
+}
+
+/* ---- Experience ---- */
+#experience { animation: bgFloat 26s ease-in-out infinite; }
+#experience::before {
+  background: linear-gradient(rgba(26,15,8,0.60), rgba(26,15,8,0.52)) !important;
+}
+
+/* ---- Reviews ---- */
+#reviews { animation: bgFloat 20s ease-in-out infinite; }
+#reviews::before {
+  background: linear-gradient(rgba(26,15,8,0.60), rgba(26,15,8,0.54)) !important;
+}
+
+/* ---- Instagram ---- */
+#instagram { animation: bgFloat 24s ease-in-out infinite; }
+#instagram::before {
+  background: linear-gradient(rgba(26,15,8,0.56), rgba(26,15,8,0.50)) !important;
+}
+
+/* ---- Footer — stays rich dark ---- */
+#site-footer::before { background: rgba(26,15,8,0.88) !important; }
+
+/* View heroes (Menu / Story / Order / Contact) */
+.v-hero { animation: bgFloat 20s ease-in-out infinite; }
+.v-hero::before {
+  background: linear-gradient(
+    180deg,
+    rgba(26,15,8,0.68) 0%,
+    rgba(26,15,8,0.44) 55%,
+    rgba(26,15,8,0.64) 100%
+  ) !important;
+}
+@media(max-width:768px){
+  .v-hero{ padding:56px 20px 44px !important; }
+  .qo-wrap{ padding:40px 16px 56px !important; }
+  .center.mb-40{ margin-bottom:24px !important; }
+}
+
+/* ---- Menu body ---- */
+#menu-body { animation: bgFloat 22s ease-in-out infinite; }
+#menu-body::before {
+  background: linear-gradient(rgba(26,15,8,0.62), rgba(26,15,8,0.56)) !important;
+}
+
+/* ---- Story sections ---- */
+#story-body { animation: bgFloat 26s ease-in-out infinite; }
+#story-body::before {
+  background: linear-gradient(rgba(26,15,8,0.60), rgba(26,15,8,0.52)) !important;
+}
+#timeline { animation: bgFloat 22s ease-in-out infinite; }
+#timeline::before {
+  background: linear-gradient(rgba(26,15,8,0.64), rgba(26,15,8,0.58)) !important;
+}
+#values { animation: bgFloat 24s ease-in-out infinite; }
+#values::before {
+  background: linear-gradient(rgba(26,15,8,0.60), rgba(26,15,8,0.52)) !important;
+}
+#team-sec { animation: bgFloat 20s ease-in-out infinite; }
+#team-sec::before {
+  background: linear-gradient(rgba(26,15,8,0.62), rgba(26,15,8,0.56)) !important;
+}
+#story-cta { animation: bgFloat 26s ease-in-out infinite; }
+#story-cta::before {
+  background: linear-gradient(rgba(26,15,8,0.60), rgba(26,15,8,0.52)) !important;
+}
+
+/* ---- Order sections ---- */
+#quick-order { animation: bgFloat 22s ease-in-out infinite; }
+#quick-order::before {
+  background: linear-gradient(rgba(26,15,8,0.62), rgba(26,15,8,0.56)) !important;
+}
+#checkout-sec { animation: bgFloat 24s ease-in-out infinite; }
+#checkout-sec::before {
+  background: linear-gradient(rgba(26,15,8,0.68), rgba(26,15,8,0.62)) !important;
+}
+
+/* ---- Contact sections ---- */
+#contact-body { animation: bgFloat 20s ease-in-out infinite; }
+#contact-body::before {
+  background: linear-gradient(rgba(26,15,8,0.62), rgba(26,15,8,0.56)) !important;
+}
+#map-sec { animation: bgFloat 26s ease-in-out infinite; }
+#map-sec::before {
+  background: linear-gradient(rgba(26,15,8,0.62), rgba(26,15,8,0.56)) !important;
+}
+
+/* ---- Card / panel backgrounds — slightly more transparent
+        so the section bg bleeds through subtly ---- */
+.m-card    { background: rgba(26,15,8,0.58) !important; }
+.exp-card  { background: rgba(26,15,8,0.52) !important; }
+.rev-card  { background: rgba(26,15,8,0.52) !important; }
+.co-summary{ background: rgba(26,15,8,0.45) !important; }
+</style>
+</head>
+<body>
+
+<!-- ===================================================
+  LOADING SCREEN
+=================================================== -->
+<div id="loader">
+  <div class="loader-icon">☕</div>
+  <div class="loader-brand">SAMDOC</div>
+  <div class="loader-sub">Coffee &amp; More — Est. 2025</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- ===================================================
+  NAVBAR
+=================================================== -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand" onclick="showView('home')">
+      <span class="nav-brand-main">SAMDOC</span>
+      <span class="nav-brand-sub">Coffee &amp; More</span>
+    </div>
+    <ul class="nav-links" id="desktopNav">
+      <li><a onclick="showView('home')" data-v="home" class="active">Home</a></li>
+      <li><a onclick="showView('menu')" data-v="menu">Menu</a></li>
+      <li><a onclick="showView('story')" data-v="story">Our Story</a></li>
+      <li><a onclick="showView('order')" data-v="order">Order</a></li>
+      <li><a onclick="showView('contact')" data-v="contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button id="cart-btn" onclick="openCart()">
+        🛒<span id="cart-badge">0</span>
+      </button>
+      <button class="hamburger" onclick="toggleMob()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobNav">
+    <a onclick="showView('home');closeMob()">Home</a>
+    <a onclick="showView('menu');closeMob()">Menu</a>
+    <a onclick="showView('story');closeMob()">Our Story</a>
+    <a onclick="showView('order');closeMob()">Order</a>
+    <a onclick="showView('contact');closeMob()">Contact</a>
+  </div>
+</nav>
+
+<!-- ===================================================
+  VIEW: HOME
+=================================================== -->
+<div id="view-home" class="view active">
+
+  <!-- HERO -->
+  <section id="hero">
+    <!-- Ken Burns animated background layer -->
+    <div class="hero-bg"></div>
+    <!-- particles injected by JS -->
+    <div class="hero-content">
+      <div class="hero-est">Est. 2025 &nbsp;·&nbsp; Ekpoma, Nigeria</div>
+      <h1 class="hero-title">Life Happens,<br><em>Coffee Helps.</em></h1>
+      <p class="hero-sub">Nigeria's coziest café experience — starting from Ekpoma, going nationwide. Every sip, handcrafted with love.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="showView('menu')">See Our Menu</button>
+        <button class="btn-outline" onclick="showView('order')">Order Now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section id="stats-bar">
+    <div class="stats-wrap">
+      <div class="stat"><span class="stat-val">2025</span><span class="stat-lbl">Established</span></div>
+      <div class="stat"><span class="stat-val">#1</span><span class="stat-lbl">Coffee Plug in Ekpoma</span></div>
+      <div class="stat"><span class="stat-val">Hot &amp; Cold</span><span class="stat-lbl">Drinks Available</span></div>
+      <div class="stat"><span class="stat-val">Food &amp; More</span><span class="stat-lbl">Beyond the Brew</span></div>
+    </div>
+  </section>
+
+  <!-- ABOUT SNIPPET -->
+  <section id="home-about">
+    <div class="about-wrap fi">
+      <span class="eyebrow">About Us</span>
+      <div class="g-divider"><div class="g-diamond"></div></div>
+      <h2 class="sec-title mb-24">More Than Coffee.<br><em>A Feeling.</em></h2>
+      <p class="sec-sub mb-40">Born in the heart of Emaudo, Ekpoma, Samdoc Coffee &amp; More is where warmth meets flavour. We're not just a café — we're a second home, a study spot, a place where memories are brewed cup by cup.</p>
+      <button class="btn-gold" onclick="showView('story')">Read Our Story</button>
+    </div>
+  </section>
+
+  <!-- FEATURED ITEMS -->
+  <section id="featured">
+    <div class="feat-wrap">
+      <div class="feat-head fi">
+        <span class="eyebrow">On The Menu</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title mb-16">Today's Favourites</h2>
+        <p class="sec-sub">The brews everyone keeps coming back for.</p>
+      </div>
+      <div class="cards-grid fi delay-1">
+        <div class="m-card">
+          <div class="m-photo"><span class="m-photo-emoji">☕</span><span class="m-photo-name">Samdoc Coffee</span></div>
+          <div class="m-body">
+            <div class="m-name">Samdoc Signature Coffee</div>
+            <div class="m-desc">Our rich, bold house coffee brewed to perfection. Hot, smooth, and deeply satisfying — the heart of everything we do.</div>
+            <div class="m-footer"><span class="m-price">₦5,000</span><button class="btn-want" onclick="addToCart('Coffee',5000)">I Want This</button></div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><span class="m-photo-emoji">🍔</span><span class="m-photo-name">Samdoc Burger</span></div>
+          <div class="m-body">
+            <div class="m-name">Samdoc Burger</div>
+            <div class="m-desc">Juicy, generously stacked with signature sauce, fresh toppings and toasted buns. A fan favourite every single day.</div>
+            <div class="m-footer"><span class="m-price">₦5,000</span><button class="btn-want" onclick="addToCart('Burger',5000)">I Want This</button></div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><span class="m-photo-emoji">🍨</span><span class="m-photo-name">Parfait</span></div>
+          <div class="m-body">
+            <div class="m-name">Samdoc Parfait</div>
+            <div class="m-desc">Layers of cream, fresh fruit and granola in a tall glass. Dessert and drink in one stunning cup. Pure indulgence.</div>
+            <div class="m-footer"><span class="m-price">₦6,000</span><button class="btn-want" onclick="addToCart('Parfait',6000)">I Want This</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="exp-wrap">
+      <div class="center fi">
+        <span class="eyebrow">The Experience</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title mb-16">Crafted With Intention</h2>
+        <p class="sec-sub">Every detail, every drink, every bite — designed to make you stay a little longer.</p>
+      </div>
+      <div class="exp-grid fi delay-1">
+        <div class="exp-card">
+          <span class="exp-emoji">☕</span>
+          <div class="exp-title">Handcrafted Coffee</div>
+          <p class="exp-desc">Each cup is pulled with care — from single-origin espresso to slow-poured cold brew. No shortcuts. Ever.</p>
+        </div>
+        <div class="exp-card">
+          <span class="exp-emoji">🍔</span>
+          <div class="exp-title">Food &amp; More</div>
+          <p class="exp-desc">Burgers, pies, croissants, cheesecake — real food made with real love, the Samdoc way.</p>
+        </div>
+        <div class="exp-card">
+          <span class="exp-emoji">✨</span>
+          <div class="exp-title">Cozy Atmosphere</div>
+          <p class="exp-desc">Warm lighting, great music, and a vibe that makes your phone go into your pocket naturally.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="reviews">
+    <div class="rev-wrap">
+      <div class="center fi">
+        <span class="eyebrow">What People Say</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title mb-16">Loved in Ekpoma</h2>
+      </div>
+      <div class="rev-grid fi delay-1">
+        <div class="rev-card">
+          <div class="rev-stars">★★★★★</div>
+          <p class="rev-text">"This place changed what I thought a café in Ekpoma could be. The latte is absolutely world-class. I study here every weekend now — it feels like home."</p>
+          <div class="rev-author">— Chisom A., University Student</div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars">★★★★★</div>
+          <p class="rev-text">"The Samdoc burger is dangerously good. The cold brew keeps me going through long lecture days. This is my unofficial second campus, no question."</p>
+          <div class="rev-author">— Emeka O., UNIBEN Graduate</div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars">★★★★★</div>
+          <p class="rev-text">"I had the cheesecake with an iced mocha and I have not stopped thinking about it. Nigeria needed this café. Ekpoma got it first. We genuinely win."</p>
+          <div class="rev-author">— Blessing I., Content Creator</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <section id="instagram">
+    <div class="ig-wrap fi">
+      <span class="eyebrow">Follow The Journey</span>
+      <div class="g-divider"><div class="g-diamond"></div></div>
+      <h2 class="sec-title mb-8">@samdoccoffee</h2>
+      <p class="sec-sub">See what's brewing daily. Join the community.</p>
+      <div class="ig-grid">
+        <div class="ig-box">☕</div><div class="ig-box">🍔</div><div class="ig-box">✨</div>
+        <div class="ig-box">🥐</div><div class="ig-box">🧋</div><div class="ig-box">🍰</div>
+      </div>
+      <a href="https://instagram.com/samdoccoffee" target="_blank" class="btn-gold">Follow on Instagram</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="site-footer">
+    <div class="footer-wrap">
+      <div class="footer-top">
+        <div class="footer-brand">SAMDOC COFFEE &amp; MORE</div>
+        <div class="footer-tag">"Life Happens, Coffee Helps"</div>
+        <div class="footer-nav">
+          <a onclick="showView('home')">Home</a>
+          <a onclick="showView('menu')">Menu</a>
+          <a onclick="showView('story')">Our Story</a>
+          <a onclick="showView('order')">Order</a>
+          <a onclick="showView('contact')">Contact</a>
+        </div>
+        <div class="footer-socials">
+          <a href="https://instagram.com/samdoccoffee" target="_blank" class="s-pill">Instagram</a>
+          <a href="https://tiktok.com/@samdoc.coffee" target="_blank" class="s-pill">TikTok</a>
+          <a href="https://wa.me/2349031267367" target="_blank" class="s-pill">WhatsApp</a>
+        </div>
+      </div>
+      <div class="footer-hr"></div>
+      <div class="footer-copy">© 2025 Samdoc Coffee &amp; More. All rights reserved. &nbsp;|&nbsp; 15 Alli Street, Emaudo, Ekpoma, Edo State, Nigeria.</div>
+    </div>
+  </footer>
+
+</div><!-- end view-home -->
+
+<!-- ===================================================
+  VIEW: MENU
+=================================================== -->
+<div id="view-menu" class="view">
+
+  <div class="v-hero" style="background-image:url('https://images.unsplash.com/photo-1545665277-5937489579f2?auto=format&fit=crop&w=1920&q=80')">
+    <div class="v-hero-inner">
+      <span class="eyebrow">The Samdoc Menu</span>
+      <h1 class="v-hero-title">What's Brewing</h1>
+      <p class="sec-sub mt-8">Handcrafted coffees, iced drinks, real food — something for every mood.</p>
+    </div>
+  </div>
+
+  <section id="menu-body">
+    <div class="menu-wrap">
+      <div class="m-tabs">
+        <button class="m-tab on" onclick="switchTab('beverages',this)">☕ Beverages</button>
+        <button class="m-tab" onclick="switchTab('protein',this)">🍗 Protein</button>
+        <button class="m-tab" onclick="switchTab('pastries',this)">🥐 Pastries</button>
+        <button class="m-tab" onclick="switchTab('breakfast',this)">🍳 Breakfast</button>
+        <button class="m-tab" onclick="switchTab('appetizer',this)">🍌 Appetizer</button>
+        <button class="m-tab" onclick="switchTab('pasta',this)">🍝 Pasta</button>
+        <button class="m-tab" onclick="switchTab('noodles',this)">🍜 Noodles</button>
+        <button class="m-tab" onclick="switchTab('smallchops',this)">🍟 Small Chops</button>
+      </div>
+      <div class="m-cat on" id="tab-beverages"></div>
+      <div class="m-cat" id="tab-protein"></div>
+      <div class="m-cat" id="tab-pastries"></div>
+      <div class="m-cat" id="tab-breakfast"></div>
+      <div class="m-cat" id="tab-appetizer"></div>
+      <div class="m-cat" id="tab-pasta"></div>
+      <div class="m-cat" id="tab-noodles"></div>
+      <div class="m-cat" id="tab-smallchops"></div>
+    </div>
+  </section>
+
+  <footer id="site-footer" style="margin-top:0;">
+    <div class="footer-wrap">
+      <div class="footer-top">
+        <div class="footer-brand">SAMDOC COFFEE &amp; MORE</div>
+        <div class="footer-tag">"Life Happens, Coffee Helps"</div>
+        <div class="footer-nav">
+          <a onclick="showView('home')">Home</a><a onclick="showView('menu')">Menu</a>
+          <a onclick="showView('story')">Our Story</a><a onclick="showView('order')">Order</a>
+          <a onclick="showView('contact')">Contact</a>
+        </div>
+      </div>
+      <div class="footer-hr"></div>
+      <div class="footer-copy">© 2025 Samdoc Coffee &amp; More. All rights reserved.</div>
+    </div>
+  </footer>
+
+</div><!-- end view-menu -->
+
+<!-- ===================================================
+  VIEW: OUR STORY
+=================================================== -->
+<div id="view-story" class="view">
+
+  <div class="v-hero" style="background-image:url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1920&q=80')">
+    <div class="v-hero-inner">
+      <span class="eyebrow">Est. 2025 — Ekpoma, Edo State</span>
+      <h1 class="v-hero-title">Our Story</h1>
+      <p class="sec-sub mt-8">From a dream on Alli Street to a movement across Nigeria.</p>
+    </div>
+  </div>
+
+  <section id="story-body">
+    <div class="story-prose fi">
+      <span class="eyebrow">Where It Began</span>
+      <div class="g-divider"><div class="g-diamond"></div></div>
+      <h2 class="sec-title" style="text-align:left;margin-bottom:36px;">A Small Street.<br><em>A Big Dream.</em></h2>
+      <p class="story-p">It started on 15 Alli Street, Emaudo, Ekpoma — a quiet corner in a city full of energy. In 2025, Samdoc Coffee &amp; More opened its doors with a simple but powerful belief: that Nigerians deserve a café experience that is world-class, warm, and truly their own.</p>
+      <p class="story-p">We noticed a gap. Students and young professionals in Ekpoma wanted a space that felt premium — somewhere they could work, connect, laugh, and refresh. A place where the coffee was real, the food was satisfying, and the atmosphere said: <em style="color:var(--gold)">"You belong here."</em></p>
+      <p class="story-p">So we built it. From the carefully sourced coffee beans to the handcrafted recipes on our menu, every detail at Samdoc was designed to say something bigger — that excellence doesn't have to come from Lagos or Abuja. It can start right here in Ekpoma.</p>
+      <p class="story-p">This is just the beginning. Samdoc Coffee &amp; More is growing — and we're taking every city in Nigeria with us, one cup at a time.</p>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <div class="tl-wrap">
+      <span class="eyebrow">Our Journey</span>
+      <div class="g-divider"><div class="g-diamond"></div></div>
+      <h2 class="sec-title center">Milestones</h2>
+      <div class="tl-list fi delay-1">
+        <div class="tl-item">
+          <div class="tl-year">2025</div>
+          <div class="tl-event">Samdoc Coffee &amp; More Opens Its Doors</div>
+          <div class="tl-detail">15 Alli Street, Emaudo, Ekpoma — the flagship store launches and immediately becomes the talk of the city. The dream is real.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">Coming Soon</div>
+          <div class="tl-event"><span class="tl-placeholder">The Next Chapter Awaits…</span></div>
+          <div class="tl-detail" style="opacity:.4">More cities. More flavours. More memories. Watch this space closely.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">The Future</div>
+          <div class="tl-event"><span class="tl-placeholder">Samdoc Goes Nationwide</span></div>
+          <div class="tl-detail" style="opacity:.4">From Ekpoma to Lagos, Abuja, Port Harcourt — Nigeria's most beloved café, everywhere you are.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="values">
+    <div class="val-wrap">
+      <div class="center fi">
+        <span class="eyebrow">What We Stand For</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title mb-8">Our Values</h2>
+      </div>
+      <div class="exp-grid fi delay-1">
+        <div class="exp-card">
+          <span class="exp-emoji">✨</span>
+          <div class="exp-title">Quality</div>
+          <p class="exp-desc">No shortcuts. No compromises. From beans to brioche — quality is the only standard we know, and we never lower the bar.</p>
+        </div>
+        <div class="exp-card">
+          <span class="exp-emoji">🤝</span>
+          <div class="exp-title">Community</div>
+          <p class="exp-desc">Samdoc was built for Ekpoma — for students, for hustlers, for anyone who needs a warm corner to call their own. This is your space.</p>
+        </div>
+        <div class="exp-card">
+          <span class="exp-emoji">☕</span>
+          <div class="exp-title">Warmth</div>
+          <p class="exp-desc">Every customer, every order, every interaction — we do it with heart. Because the best ingredient in any drink is the love behind it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team-sec">
+    <div class="team-wrap">
+      <div class="center fi">
+        <span class="eyebrow">The Samdoc Family</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title">Meet The Team</h2>
+      </div>
+      <div class="team-grid fi delay-1">
+        <div class="team-card">
+          <div class="team-photo">👤</div>
+          <div class="team-name">[Team Member]</div>
+          <div class="team-role">Founder &amp; CEO</div>
+        </div>
+        <div class="team-card">
+          <div class="team-photo">👤</div>
+          <div class="team-name">[Team Member]</div>
+          <div class="team-role">Head Barista</div>
+        </div>
+        <div class="team-card">
+          <div class="team-photo">👤</div>
+          <div class="team-name">[Team Member]</div>
+          <div class="team-role">Head Chef</div>
+        </div>
+        <div class="team-card">
+          <div class="team-photo">👤</div>
+          <div class="team-name">[Team Member]</div>
+          <div class="team-role">Customer Experience</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="story-cta">
+    <div class="scta-wrap fi">
+      <span class="eyebrow">We're Waiting For You</span>
+      <div class="g-divider"><div class="g-diamond"></div></div>
+      <h2 class="sec-title mb-16">Come Visit Us</h2>
+      <p class="sec-sub mb-40">15 Alli Street, Emaudo, Ekpoma. Walk in, pull up a chair. Coffee's always on.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-gold" onclick="showView('contact')">Find Us Here</button>
+        <button class="btn-outline" onclick="showView('order')">Order Online</button>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer">
+    <div class="footer-wrap">
+      <div class="footer-top">
+        <div class="footer-brand">SAMDOC COFFEE &amp; MORE</div>
+        <div class="footer-tag">"Life Happens, Coffee Helps"</div>
+        <div class="footer-nav">
+          <a onclick="showView('home')">Home</a><a onclick="showView('menu')">Menu</a>
+          <a onclick="showView('story')">Our Story</a><a onclick="showView('order')">Order</a>
+          <a onclick="showView('contact')">Contact</a>
+        </div>
+      </div>
+      <div class="footer-hr"></div>
+      <div class="footer-copy">© 2025 Samdoc Coffee &amp; More. All rights reserved.</div>
+    </div>
+  </footer>
+
+</div><!-- end view-story -->
+
+<!-- ===================================================
+  VIEW: ORDER
+=================================================== -->
+<div id="view-order" class="view">
+
+  <div class="v-hero" style="background-image:url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1920&q=80')">
+    <div class="v-hero-inner">
+      <span class="eyebrow">Ready to Order?</span>
+      <h1 class="v-hero-title">Place My Order</h1>
+      <p class="sec-sub mt-8">Pick your favourites, fill in your details, and we'll handle the rest.</p>
+    </div>
+  </div>
+
+  <section id="quick-order">
+    <div class="qo-wrap">
+      <div class="center mb-40 fi">
+        <span class="eyebrow">Quick Pick</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title mb-8">Build Your Order</h2>
+        <p class="sec-sub">Click "I Want This" to add items, then scroll down to checkout.</p>
+      </div>
+      <div id="order-grid" class="cards-grid"></div>
+    </div>
+  </section>
+
+  <section id="checkout-sec">
+    <div class="co-wrap">
+      <span class="eyebrow center" style="display:block">Checkout</span>
+      <div class="g-divider"><div class="g-diamond"></div></div>
+      <h2 class="sec-title center mb-40">Your Order Details</h2>
+
+      <!-- Summary -->
+      <div class="co-summary">
+        <h3>📋 Order Summary</h3>
+        <div id="co-items"><p class="co-empty">Your cart is empty — add items above ↑</p></div>
+        <div id="co-total-row" class="co-total-row" style="display:none">
+          <span class="co-total-lbl">Total</span>
+          <span id="co-total-amt" class="co-total-amt"></span>
+        </div>
+      </div>
+
+      <!-- Order Type -->
+      <div class="f-group">
+        <span class="f-label">Order Type</span>
+        <div class="o-toggle">
+          <button class="o-opt on" id="btn-delivery" onclick="setType('delivery')">🛵&nbsp; Delivery</button>
+          <button class="o-opt" id="btn-pickup" onclick="setType('pickup')">🏃&nbsp; Pickup</button>
+        </div>
+      </div>
+
+      <!-- Fields -->
+      <div class="f-group">
+        <label class="f-label">Full Name</label>
+        <input type="text" class="f-input" id="o-name" placeholder="Your full name">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Phone Number</label>
+        <input type="tel" class="f-input" id="o-phone" placeholder="08xxxxxxxxx">
+      </div>
+      <div class="f-group" id="addr-grp">
+        <label class="f-label">Delivery Address</label>
+        <input type="text" class="f-input" id="o-addr" placeholder="Your full delivery address">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Additional Notes</label>
+        <textarea class="f-input" id="o-notes" placeholder="Any special instructions? (optional)"></textarea>
+      </div>
+
+      <!-- Payment -->
+      <div class="f-group">
+        <span class="f-label">Payment Method</span>
+        <div class="pay-opts">
+          <label class="pay-opt sel">
+            <input type="radio" name="pay" value="Pay on Delivery" checked onchange="toggleBank(this)">
+            <span class="pay-lbl">💵 Pay on Delivery / Pickup</span>
+          </label>
+          <label class="pay-opt">
+            <input type="radio" name="pay" value="Bank Transfer" onchange="toggleBank(this)">
+            <span class="pay-lbl">🏦 Bank Transfer</span>
+          </label>
+        </div>
+        <div class="bank-box" id="bank-box">
+          <p><strong>Account Details</strong><br><br>[Account Name]<br>[Bank Name]<br>[Account Number]</p>
+        </div>
+      </div>
+
+      <button class="btn-gold" style="width:100%;padding:18px;font-size:.8rem;margin-top:8px;" onclick="placeOrder()">
+        ☕&nbsp; Place My Order via WhatsApp
+      </button>
+    </div>
+  </section>
+
+  <footer id="site-footer">
+    <div class="footer-wrap">
+      <div class="footer-top">
+        <div class="footer-brand">SAMDOC COFFEE &amp; MORE</div>
+        <div class="footer-tag">"Life Happens, Coffee Helps"</div>
+        <div class="footer-nav">
+          <a onclick="showView('home')">Home</a><a onclick="showView('menu')">Menu</a>
+          <a onclick="showView('story')">Our Story</a><a onclick="showView('order')">Order</a>
+          <a onclick="showView('contact')">Contact</a>
+        </div>
+      </div>
+      <div class="footer-hr"></div>
+      <div class="footer-copy">© 2025 Samdoc Coffee &amp; More. All rights reserved.</div>
+    </div>
+  </footer>
+
+</div><!-- end view-order -->
+
+<!-- ===================================================
+  VIEW: CONTACT
+=================================================== -->
+<div id="view-contact" class="view">
+
+  <div class="v-hero" style="background-image:url('https://images.unsplash.com/photo-1453614512568-c4024d13c247?auto=format&fit=crop&w=1920&q=80')">
+    <div class="v-hero-inner">
+      <span class="eyebrow">Get in Touch</span>
+      <h1 class="v-hero-title">Let's Talk</h1>
+      <p class="sec-sub mt-8">We'd love to hear from you. Come in, call, or drop a message.</p>
+    </div>
+  </div>
+
+  <section id="contact-body">
+    <div class="cb-wrap">
+
+      <!-- LEFT: Info -->
+      <div class="fi">
+        <h3 class="ci-title">Find Us &amp; Reach Us</h3>
+        <div class="ci-item">
+          <span class="ci-icon">📍</span>
+          <div>
+            <div class="ci-lbl">Address</div>
+            <div class="ci-val">Along 1T4 Road, Ekpoma<br>Edo State, Nigeria</div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <span class="ci-icon">📱</span>
+          <div>
+            <div class="ci-lbl">Phone / WhatsApp</div>
+            <div class="ci-val"><a href="tel:09031267367">09031267367</a></div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <span class="ci-icon">📸</span>
+          <div>
+            <div class="ci-lbl">Instagram</div>
+            <div class="ci-val"><a href="https://instagram.com/samdoccoffee" target="_blank" style="color:var(--gold);">@samdoccoffee</a></div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <span class="ci-icon">🎵</span>
+          <div>
+            <div class="ci-lbl">TikTok</div>
+            <div class="ci-val"><a href="https://tiktok.com/@samdoc.coffee" target="_blank" style="color:var(--gold);">samdoc.coffee</a></div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <span class="ci-icon">👻</span>
+          <div>
+            <div class="ci-lbl">Snapchat</div>
+            <div class="ci-val"><a href="https://snapchat.com/add/Meduanh" target="_blank" style="color:var(--gold);">@Meduanh</a></div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <span class="ci-icon">🕐</span>
+          <div>
+            <div class="ci-lbl">Opening Hours</div>
+            <div class="ci-val" style="color:var(--cream-dim)">[Opening Hours — Coming Soon]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Form -->
+      <div class="fi delay-2">
+        <h3 style="font-family:var(--font-d);font-size:1.8rem;color:var(--cream);margin-bottom:30px;">Send a Message</h3>
+        <div class="f-group">
+          <label class="f-label">Your Name</label>
+          <input type="text" class="f-input" id="c-name" placeholder="What should we call you?">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Phone Number</label>
+          <input type="tel" class="f-input" id="c-phone" placeholder="Your WhatsApp number">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Message</label>
+          <textarea class="f-input" id="c-msg" placeholder="Type your message here…" style="min-height:140px;"></textarea>
+        </div>
+        <button class="btn-gold" style="width:100%;padding:16px;" onclick="sendContact()">
+          Send via WhatsApp 💬
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="map-sec">
+    <div class="map-wrap fi">
+      <div class="center mb-8">
+        <span class="eyebrow">Where to Find Us</span>
+        <div class="g-divider"><div class="g-diamond"></div></div>
+        <h2 class="sec-title">Visit The Café</h2>
+      </div>
+      <div class="map-ph">
+        <div class="map-ph-icon">📍</div>
+        <div class="map-ph-txt">Google Maps Coming Soon</div>
+        <div class="map-ph-addr">15 Alli Street, Emaudo, Ekpoma, Edo State</div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer">
+    <div class="footer-wrap">
+      <div class="footer-top">
+        <div class="footer-brand">SAMDOC COFFEE &amp; MORE</div>
+        <div class="footer-tag">"Life Happens, Coffee Helps"</div>
+        <div class="footer-nav">
+          <a onclick="showView('home')">Home</a><a onclick="showView('menu')">Menu</a>
+          <a onclick="showView('story')">Our Story</a><a onclick="showView('order')">Order</a>
+          <a onclick="showView('contact')">Contact</a>
+        </div>
+        <div class="footer-socials mt-16">
+          <a href="https://instagram.com/samdoccoffee" target="_blank" class="s-pill">Instagram</a>
+          <a href="https://tiktok.com/@samdoc.coffee" target="_blank" class="s-pill">TikTok</a>
+          <a href="https://wa.me/2349031267367" target="_blank" class="s-pill">WhatsApp</a>
+        </div>
+      </div>
+      <div class="footer-hr"></div>
+      <div class="footer-copy">© 2025 Samdoc Coffee &amp; More. All rights reserved. &nbsp;|&nbsp; 15 Alli Street, Emaudo, Ekpoma, Edo State.</div>
+    </div>
+  </footer>
+
+</div><!-- end view-contact -->
+
+<!-- ===================================================
+  CART OVERLAY + PANEL
+=================================================== -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-panel">
+  <div class="cp-head">
+    <span class="cp-title">Your Order ☕</span>
+    <button class="cp-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cp-items" id="cp-list"></div>
+  <div class="cp-foot" id="cp-foot" style="display:none;">
+    <div class="cp-subtotal">
+      <span class="cp-sub-lbl">Subtotal</span>
+      <span class="cp-sub-amt" id="cp-total">₦0</span>
+    </div>
+    <button class="btn-gold" style="width:100%;padding:15px;" onclick="closeCart();showView('order')">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<!-- ===================================================
+  WHATSAPP FLOAT
+=================================================== -->
+<a href="https://wa.me/2349031267367" target="_blank" id="wa-float" title="Chat on WhatsApp">💬</a>
+
+<!-- ===================================================
+  JAVASCRIPT
+=================================================== -->
+<script>
+/* -------------------------------------------------------
+   MENU DATA
+------------------------------------------------------- */
+const MENU = {
+  beverages:[
+    {name:'Coffee',       desc:'Our signature house coffee — rich, bold, and deeply satisfying. The heart of everything we do.',         price:5000, emoji:'☕'},
+    {name:'Milkshake',    desc:'Thick, creamy, indulgent milkshakes in assorted flavours. Pure happiness in every sip.',               price:5000, emoji:'🥤'},
+    {name:'Charpman',     desc:'A refreshing blend of Fanta, Sprite, Grenadine and lime. The Nigerian classic, done right.',            price:4000, emoji:'🍹'},
+    {name:'Mocktail',     desc:'Expertly crafted non-alcoholic cocktails — fruity, vibrant, and absolutely gorgeous.',                  price:4500, emoji:'🍹'},
+    {name:'Cocktail',     desc:'Premium cocktail blends crafted with skill. For when you want something extra special.',                price:4500, emoji:'🍸'},
+    {name:'Parfait',      desc:'Layers of cream, fresh fruit, and granola in a tall glass. Dessert and drink in one beautiful cup.',    price:6000, emoji:'🍨'},
+  ],
+  protein:[
+    {name:'Suya Stick',      desc:'Tender spiced beef skewers grilled to smoky perfection. A Nigerian street food classic elevated.',   price:1000, emoji:'🍢'},
+    {name:'Big Turkey',      desc:'A full generous portion of seasoned turkey, grilled to golden perfection. Rich and satisfying.',     price:7500, emoji:'🍗'},
+    {name:'Big Chicken',     desc:'Generous whole chicken portion, marinated in signature Samdoc spices and cooked with love.',        price:4500, emoji:'🍗'},
+    {name:'Medium Chicken',  desc:'A satisfying medium chicken portion. Perfectly seasoned, beautifully cooked every time.',           price:3500, emoji:'🍗'},
+    {name:'Small Chicken',   desc:'A lighter chicken portion — just right for a quick, delicious, no-fuss meal.',                     price:2500, emoji:'🍗'},
+  ],
+  pastries:[
+    {name:'Cake',            desc:'Soft, moist, and beautifully flavoured. A slice of pure celebration with every bite.',              price:1000, emoji:'🎂'},
+    {name:'Milky Donut',     desc:'Pillowy soft donuts soaked in sweet milky glaze. Impossible to stop at just one.',                  price:1000, emoji:'🍩'},
+    {name:'Meatpie',         desc:'Flaky golden pastry filled with perfectly seasoned minced meat. A timeless Nigerian classic.',      price:2000, emoji:'🥧'},
+    {name:'Chicken Pie',     desc:'Rich, flaky pastry filled with tender seasoned chicken. Warm comfort in every single bite.',        price:2500, emoji:'🥧'},
+    {name:'Fish Roll',       desc:'Crispy golden pastry rolled around a delicately seasoned fish filling. Perfectly light.',           price:2000, emoji:'🥧'},
+    {name:'Banana Bread',    desc:'Moist, fragrant banana bread baked fresh daily. Sweet, hearty, and deeply satisfying.',            price:3500, emoji:'🍞'},
+    {name:'Burger',          desc:'Juicy, generously stacked Samdoc burger with signature sauce, fresh veg, and toasted buns.',       price:5000, emoji:'🍔'},
+    {name:'Croissants',      desc:'Golden, buttery, flaky croissants baked to perfection. The ideal partner for your morning coffee.', price:2500, emoji:'🥐'},
+    {name:'Sugar Doughnuts', desc:'Light, airy doughnuts coated in sweet sugar. Simple joy at its absolute finest.',                  price:600,  emoji:'🍩'},
+    {name:'Jam Doughnuts',   desc:'Fluffy doughnuts bursting with sweet jam filling inside. A Samdoc crowd favourite.',               price:800,  emoji:'🍩'},
+    {name:'Sausage Roll',    desc:'Crispy, golden pastry wrapped around a perfectly seasoned sausage. Great for any time of day.',    price:2000, emoji:'🥖'},
+  ],
+  breakfast:[
+    {name:'Pancake Breakfast',      desc:'Fluffy pancakes, scrambled eggs, syrup, hot dogs and a cup of Samdoc coffee. The ultimate morning feast.',       price:14000, emoji:'🥞'},
+    {name:'Baked Beans Breakfast',  desc:'Baked beans, scrambled eggs, French toast, hot dogs and a cup of coffee. Hearty and deeply satisfying.',         price:11000, emoji:'🍳'},
+    {name:'Waffle Breakfast',       desc:'Golden waffles, scrambled eggs, syrup, hot dogs and a cup of coffee. A weekend treat available every day.',       price:14000, emoji:'🧇'},
+    {name:'Toast & Coffee',         desc:'Classic toast bread with a freshly brewed cup of Samdoc signature coffee. Simple, perfect, timeless.',            price:10000, emoji:'🍞'},
+    {name:'Chicken Sandwich',       desc:'Tender seasoned chicken packed in a toasted sandwich with fresh toppings. A premium café lunch.',                 price:4500,  emoji:'🥪'},
+  ],
+  appetizer:[
+    {name:'Turkey & Bole',     desc:'Grilled plantain (bole) served alongside deliciously spiced turkey. A true Nigerian delicacy perfected.',  price:10000, emoji:'🍌'},
+    {name:'Chicken & Bole',    desc:'Grilled plantain with juicy, deeply seasoned chicken. Rich flavour, authentic experience every time.',     price:7000,  emoji:'🍌'},
+    {name:'Chicken & Chips',   desc:'Crispy golden chips alongside perfectly seasoned chicken pieces. A beloved combination for good reason.',   price:7000,  emoji:'🍟'},
+  ],
+  pasta:[
+    {name:'Stir Fry Spaghetti', desc:'Spaghetti tossed in a rich, bold stir-fry sauce with vegetables. Full of flavour and deeply filling.',   price:3000, emoji:'🍝'},
+    {name:'Jollof Spaghetti',   desc:'The Nigerian jollof magic applied to pasta. Smoky, deeply seasoned, and impossibly good.',               price:3000, emoji:'🍝'},
+  ],
+  noodles:[
+    {name:'Noodles & Fried Egg',           desc:'Perfectly seasoned noodles topped with a golden crispy fried egg. Quick, comforting, delicious.',          price:3000, emoji:'🍜'},
+    {name:'Noodles & Scrambled Eggs',      desc:'Smooth creamy scrambled eggs on a bed of well-seasoned noodles. Simple comfort food done right.',          price:2500, emoji:'🍜'},
+    {name:'Noodles, Eggs & Hot Dog',       desc:'The full package — seasoned noodles, fried egg, and a juicy hot dog. Seriously filling and satisfying.',   price:4000, emoji:'🍜'},
+  ],
+  smallchops:[
+    {name:'Puff Puff',        desc:'Hot, soft, perfectly round Nigerian puff puff. Lightly sweetened and utterly addictive. A true classic.',  price:150,  emoji:'🟡'},
+    {name:'Samosa',           desc:'Crispy golden triangles filled with spiced vegetables or meat. A delightful bite-sized snack.',            price:500,  emoji:'🥟'},
+    {name:'Spring Roll',      desc:'Crispy, golden spring rolls packed with fresh vegetables and well-seasoned filling. Light and satisfying.', price:500,  emoji:'🥟'},
+    {name:'Portion of Chips', desc:'Crispy golden chips, seasoned and fried to a perfect crunch. The ideal side or standalone snack.',        price:1800, emoji:'🍟'},
+  ],
+};
+
+/* -------------------------------------------------------
+   CART STATE
+------------------------------------------------------- */
+let cart = [];
+
+function addToCart(name, price) {
+  const ex = cart.find(i => i.name === name);
+  if(ex){ ex.qty++; } else { cart.push({name, price, qty:1}); }
+  refreshCart();
+  // Flash cart button
+  const btn = document.getElementById('cart-btn');
+  btn.style.background = 'rgba(201,168,76,.28)';
+  setTimeout(()=>{ btn.style.background=''; }, 450);
+}
+
+function changeQty(name, d) {
+  const item = cart.find(i=>i.name===name);
+  if(!item) return;
+  item.qty += d;
+  if(item.qty<=0) cart = cart.filter(i=>i.name!==name);
+  refreshCart();
+}
+
+function getTotal(){ return cart.reduce((s,i)=>s+i.price*i.qty,0); }
+function getCount(){ return cart.reduce((s,i)=>s+i.qty,0); }
+
+function refreshCart() {
+  // Badge
+  const badge = document.getElementById('cart-badge');
+  const cnt = getCount();
+  badge.textContent = cnt;
+  badge.style.display = cnt>0 ? 'flex' : 'none';
+
+  // Panel items
+  const listEl = document.getElementById('cp-list');
+  const footEl = document.getElementById('cp-foot');
+  if(cart.length===0){
+    listEl.innerHTML = `<div class="cp-empty"><div class="cp-empty-icon">☕</div><div class="cp-empty-txt">Your cart is empty</div></div>`;
+    footEl.style.display = 'none';
+  } else {
+    listEl.innerHTML = cart.map(i=>`
+      <div class="cp-item">
+        <div class="cp-iname">${i.name}</div>
+        <div class="qty-ctrl">
+          <button class="qty-b" onclick="changeQty('${i.name.replace(/'/g,"\\'")}', -1)">−</button>
+          <span class="qty-n">${i.qty}</span>
+          <button class="qty-b" onclick="changeQty('${i.name.replace(/'/g,"\\'")}', 1)">+</button>
+        </div>
+        <div class="cp-iprice">₦${(i.price*i.qty).toLocaleString()}</div>
+      </div>`).join('');
+    footEl.style.display = 'block';
+    document.getElementById('cp-total').textContent = '₦'+getTotal().toLocaleString();
+  }
+
+  // Checkout summary
+  refreshCoSummary();
+}
+
+function refreshCoSummary(){
+  const el = document.getElementById('co-items');
+  const tRow = document.getElementById('co-total-row');
+  const tAmt = document.getElementById('co-total-amt');
+  if(!el) return;
+  if(cart.length===0){
+    el.innerHTML = `<p class="co-empty">Your cart is empty — add items above ↑</p>`;
+    if(tRow) tRow.style.display='none';
+  } else {
+    el.innerHTML = cart.map(i=>`
+      <div class="co-row">
+        <span style="color:var(--cream)">${i.name} ×${i.qty}</span>
+        <span style="color:var(--gold);font-weight:600">₦${(i.price*i.qty).toLocaleString()}</span>
+      </div>`).join('');
+    if(tRow){ tRow.style.display='flex'; tAmt.textContent='₦'+getTotal().toLocaleString(); }
+  }
+}
+
+/* -------------------------------------------------------
+   CART OPEN / CLOSE
+------------------------------------------------------- */
+function openCart(){
+  document.getElementById('cart-overlay').classList.add('open');
+  document.getElementById('cart-panel').classList.add('open');
+  document.body.style.overflow='hidden';
+  refreshCart();
+}
+function closeCart(){
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-panel').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* -------------------------------------------------------
+   VIEW SWITCHING
+------------------------------------------------------- */
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  const target = document.getElementById('view-'+v);
+  if(target){ target.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  document.querySelectorAll('#desktopNav a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.v===v);
+  });
+  if(v==='order') setTimeout(refreshCoSummary, 60);
+  setTimeout(activateFadeIns, 120);
+}
+
+/* -------------------------------------------------------
+   MENU TABS
+------------------------------------------------------- */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.m-cat').forEach(c=>c.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const el = document.getElementById('tab-'+tab);
+  if(el) el.classList.add('on');
+}
+
+/* -------------------------------------------------------
+   RENDER MENU CARDS
+------------------------------------------------------- */
+function makeCard(item){
+  const safeName = item.name.replace(/'/g,"\\'");
+  return `<div class="m-card">
+    <div class="m-photo"><span class="m-photo-emoji">${item.emoji}</span><span class="m-photo-name">${item.name}</span></div>
+    <div class="m-body">
+      <div class="m-name">${item.name}</div>
+      <div class="m-desc">${item.desc}</div>
+      <div class="m-footer">
+        <span class="m-price">₦${item.price.toLocaleString()}</span>
+        <button class="btn-want" onclick="addToCart('${safeName}',${item.price})">I Want This</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderMenus() {
+  Object.entries(MENU).forEach(([cat, items])=>{
+    const el = document.getElementById('tab-'+cat);
+    if(el) el.innerHTML = items.map(makeCard).join('');
+  });
+}
+
+function renderOrderGrid() {
+  const el = document.getElementById('order-grid');
+  if(!el) return;
+  const all = Object.values(MENU).flat();
+  el.innerHTML = all.map(makeCard).join('');
+}
+
+/* -------------------------------------------------------
+   ORDER FORM
+------------------------------------------------------- */
+let orderType = 'delivery';
+
+function setType(t){
+  orderType = t;
+  document.getElementById('btn-delivery').classList.toggle('on', t==='delivery');
+  document.getElementById('btn-pickup').classList.toggle('on', t==='pickup');
+  const ag = document.getElementById('addr-grp');
+  if(ag) ag.style.display = t==='delivery' ? 'block':'none';
+}
+
+function toggleBank(radio){
+  document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'));
+  radio.closest('.pay-opt').classList.add('sel');
+  document.getElementById('bank-box').style.display = radio.value==='Bank Transfer'?'block':'none';
+}
+
+function placeOrder(){
+  if(cart.length===0){ alert('Your cart is empty! Add some items first.'); return; }
+  const name  = (document.getElementById('o-name')||{}).value?.trim();
+  const phone = (document.getElementById('o-phone')||{}).value?.trim();
+  const addr  = (document.getElementById('o-addr')||{}).value?.trim();
+  const notes = (document.getElementById('o-notes')||{}).value?.trim();
+  const pay   = document.querySelector('input[name="pay"]:checked')?.value || 'Pay on Delivery';
+  if(!name||!phone){ alert('Please enter your name and phone number.'); return; }
+  if(orderType==='delivery'&&!addr){ alert('Please enter your delivery address.'); return; }
+
+  const lines = cart.map(i=>`- ${i.name} ×${i.qty} — ₦${(i.price*i.qty).toLocaleString()}`).join('\n');
+  let msg = `Hello Samdoc Coffee & More! ☕\n\nNew Order:\n${lines}\n\nTotal: ₦${getTotal().toLocaleString()}\nType: ${orderType==='delivery'?'Delivery':'Pickup'}\nName: ${name}\nPhone: ${phone}`;
+  if(orderType==='delivery') msg += `\nAddress: ${addr}`;
+  if(notes) msg += `\nNotes: ${notes}`;
+  msg += `\nPayment: ${pay}`;
+  window.open('https://wa.me/2349031267367?text='+encodeURIComponent(msg),'_blank');
+}
+
+/* -------------------------------------------------------
+   CONTACT FORM
+------------------------------------------------------- */
+function sendContact(){
+  const name = (document.getElementById('c-name')||{}).value?.trim();
+  const phone= (document.getElementById('c-phone')||{}).value?.trim();
+  const msg  = (document.getElementById('c-msg')||{}).value?.trim();
+  if(!name||!msg){ alert('Please enter your name and message.'); return; }
+  const text = `Hello Samdoc Coffee & More! 👋\n\nName: ${name}\nPhone: ${phone||'Not provided'}\n\nMessage:\n${msg}`;
+  window.open('https://wa.me/2349031267367?text='+encodeURIComponent(text),'_blank');
+}
+
+/* -------------------------------------------------------
+   MOBILE NAV
+------------------------------------------------------- */
+function toggleMob(){ document.getElementById('mobNav').classList.toggle('open'); }
+function closeMob(){ document.getElementById('mobNav').classList.remove('open'); }
+
+/* -------------------------------------------------------
+   STEAM PARTICLES
+------------------------------------------------------- */
+function spawnParticles(){
+  const hero = document.getElementById('hero');
+  if(!hero) return;
+  for(let i=0;i<22;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    const sz = Math.random()*14+5;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:${5+Math.random()*25}%;animation-duration:${7+Math.random()*9}s;animation-delay:${Math.random()*7}s;`;
+    hero.appendChild(p);
+  }
+}
+
+/* -------------------------------------------------------
+   SCROLL FADE-INS
+------------------------------------------------------- */
+function activateFadeIns(){
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); } });
+  },{threshold:0.05});
+  document.querySelectorAll('.fi:not(.vis)').forEach(el=>io.observe(el));
+}
+
+/* -------------------------------------------------------
+   LOADER
+------------------------------------------------------- */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const l = document.getElementById('loader');
+    l.classList.add('out');
+    setTimeout(()=>l.remove(),800);
+    activateFadeIns();
+  }, 2300);
+});
+
+/* -------------------------------------------------------
+   INIT
+------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMenus();
+  renderOrderGrid();
+  spawnParticles();
+  refreshCart();
+});
+</script>
+</body>
+</html>
