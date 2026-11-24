@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+
+# Send visitors and search engines from the old Netlify address to the main domain
+[[redirects]]
+  from = "https://samdoccoffee.netlify.app/*"
+  to = "https://samdoc.coffee/:splat"
+  status = 301
+  force = true
